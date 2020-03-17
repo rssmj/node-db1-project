@@ -87,4 +87,51 @@ router.get('/:id', (req, res) => {
 		});
 });
 
+// insert data
+router.post('/', (req, res) => {
+	const body = req.body;
+	const { id } = req.params;
+	db('accounts')
+		.insert(body, id)
+		.then(ids => {
+			res.status(201).json({ results: ids });
+		})
+		.catch(() => {
+			res.status(500).json({ response: 'error is error' });
+		});
+});
+
+// update data
+router.put('/:id', (req, res) => {
+	const changes = req.body;
+	const { id } = req.params;
+	db('accounts')
+		.where({ id })
+		.update(changes)
+		.then(count => {
+			count > 0
+				? res.status(200).json({ response: 'account updated' })
+				: res.status(404).json({ response: 'none accounts found' });
+		})
+		.catch(() => {
+			res.status(500).json({ response: 'e r r o r' });
+		});
+});
+
+// delete data
+router.delete('/:id', (req, res) => {
+	const { id } = req.params;
+	db('accounts')
+		.where({ id })
+		.del()
+		.then(count => {
+			count > 0
+				? res.status(200).json({ response: 'account deleted' })
+				: res.status(404).json({ response: 'found nothing' });
+		})
+		.catch(() => {
+			res.status(500).json({ response: `error, that didn't work` });
+		});
+});
+
 module.exports = router;
